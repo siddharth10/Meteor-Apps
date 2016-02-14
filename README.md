@@ -5,7 +5,7 @@ This repository aims at building apps using meteor.js for developing an basic un
 
 With Meteor you write apps:
 
-•	in pure JavaScript
+•	in pure JavaScript <br />
 •	that send data over the wire, rather than HTML
 •	using your choice of popular open-source libraries
 
