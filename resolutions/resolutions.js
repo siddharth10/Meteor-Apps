@@ -29,7 +29,7 @@ if (Meteor.isClient) {
           return false;//so that page does not refresh
         }
     });
-    
+ 
 }
 
 if (Meteor.isServer) {
