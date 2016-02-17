@@ -26,10 +26,12 @@ if (Meteor.isClient) {
       'submit .new-resolution': function(event) { //if you want an click event, then change submit to click
           var title = event.target.title.value;//Grabbing the value
           
-          Resolutions.insert({ //add record to the database
+        /*  Resolutions.insert({ //add record to the database
             title : title,
               createdAt: new Date()
-          });
+          });*/
+          
+          Meteor.call("addResolution", title); //going to pass the arguments
           
           event.target.title.value = ""; //Eliminating the previous value from the field
           
@@ -43,10 +45,10 @@ if (Meteor.isClient) {
  
     Template.resolution.events({
         'click .toggle-checked': function() {
-            Resolutions.update(this._id, {$set: {checked: !this.checked}});
+            Meteor.call("updateResolution", this._id, !this.checked);
         },
         'click .delete': function() {
-            Resolutions.remove(this._id);
+            Meteor.call("deleteResolution", this._id);
         }
     });
     
@@ -60,3 +62,22 @@ if (Meteor.isServer) {
     // code to run on server at startup
   });
 }
+
+
+
+//Adding Methods Exceptionally to speed up process and improve efficency and view callbacks
+
+Meteor.methods({
+  addResolution: function(title) {
+     Resolutions.insert({
+       title:title,
+    createdAt: new Date()
+       });
+    },
+    deleteResolution: function(id) {
+        Resolutions.remove(id);
+    },
+    updateResolution: function(id, checked) {
+         Resolutions.update(id, {$set: {checked: checked}});
+    }
+});
