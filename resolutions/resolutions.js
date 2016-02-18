@@ -65,7 +65,7 @@ if (Meteor.isServer) {
 
 
 
-//Adding Methods Exceptionally to speed up process and improve efficency and view callbacks
+//Adding Methods Exceptionally to speed up process and improve efficency and view callbacks from above.
 
 Meteor.methods({
   addResolution: function(title) {
