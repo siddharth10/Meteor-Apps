@@ -3,6 +3,8 @@ Resolutions = new Mongo.Collection('resolutions'); //Mongo db collection
 
 
 if (Meteor.isClient) {
+    Meteor.subscribe("resolutions"); //Getting subscribed for publishing
+    
     Template.body.helpers({
       resolutions: function() {
           if (Session.get('hideFinished')) {  //if it is true
@@ -42,6 +44,15 @@ if (Meteor.isClient) {
             Session.set('hideFinished', event.target.checked);
         }
     });
+    
+    
+    Tenplate.resolution.helpers({
+            isOwner: function() {
+                return this.owner === Meteor.userId();
+                
+            }    
+    });
+    
  
     Template.resolution.events({
         'click .toggle-checked': function() {
@@ -49,6 +60,9 @@ if (Meteor.isClient) {
         },
         'click .delete': function() {
             Meteor.call("deleteResolution", this._id);
+        },
+        'click .toggle-private': function() {
+            Meteor.call("setPrivate", this._id, !this.private);
         }
     });
     
@@ -61,6 +75,10 @@ if (Meteor.isServer) {
   Meteor.startup(function () {
     // code to run on server at startup
   });
+    
+    Meteor.publish("resolutions", function() {
+        return Resolutions.find();
+    });
 }
 
 
@@ -71,13 +89,25 @@ Meteor.methods({
   addResolution: function(title) {
      Resolutions.insert({
        title:title,
-    createdAt: new Date()
+    createdAt: new Date(),
+         owner: Meteor.userId()
        });
-    },
-    deleteResolution: function(id) {
-        Resolutions.remove(id);
     },
     updateResolution: function(id, checked) {
          Resolutions.update(id, {$set: {checked: checked}});
+    },    
+    deleteResolution: function(id) {
+        Resolutions.remove(id);
+    },
+    setPrivate: function(id, private) {
+        var res = Resolutions.findOne(id);
+     
+        if(res.owner !== Meteor.userId()) {
+            throw new Meteor.Error('not-authorized');
+        }
+        
+         Resolutions.update(id, {$set: {private: private}});
+        
+        
     }
 });
